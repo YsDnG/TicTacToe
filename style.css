@@ -1,0 +1,129 @@
+*,*::before,*::after{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+/**** CSS variables *****/
+:root{
+    --background-color-1: #034732;
+    --background-color-2: #14213d;
+    --background-color-3: #fca311;
+
+    --color-1:#e5e5e5;
+    --color-2:#eaeaea;
+    --color-3:#c1292e;
+}
+/***********************/
+
+/**** BASE STYLE*******/
+html,body{
+    height: 100vh;
+    width: 100vh;
+
+    background-color: var(--background-color-2);
+
+    color: var(--color-1);
+}
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3em;
+}
+
+header{
+    height: 15vh;
+    width: 100%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    box-shadow: var(--background-color-3) 0px 2px 4px 0px, var(--background-color-3) 0px 2px 6px 2px;
+
+    background-color: var(--background-color-3);
+}
+/*********************/
+
+/****LAYOUT STYLE***********/
+.main-content{
+    height: 50vh;
+    width: 50vh;
+
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+
+    box-shadow: var(--background-color-3) 0px 2px 4px 0px, var(--background-color-3) 0px 2px 6px 2px;
+
+
+    background-color: var(--color-3);
+}
+.grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid var(--background-color-2);
+
+    font-size: 1.5em;
+
+    
+}
+.btn-reset
+{
+    display: inline-block;
+    outline: 0;
+    border:0;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    color: var(--color-1);
+    background-color: var(--color-3);
+    line-height: 15px;
+    border-radius: 40px;
+    padding: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+    box-shadow:var(--background-color-3) -2px 0px 2px, var(--color-3) 0px 0px 0px 4px, var(--background-color-3) 0px 0px 2px 7px;
+    transition: all 0.2s;
+    :hover{
+        box-shadow: rgb(246, 84, 174) -2px -2px 0px 2px, rgb(255, 198, 0) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 0px 2px 7px;
+        transform: scale(1.01);
+    }
+    
+}
+
+
+
+.result-display{
+    height: 15vh;
+    width: 80%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    border-radius: 25px;
+
+    background-color: var(--background-color-3);
+
+    font-size: 2em;
+    font-weight: 800;
+}
+
+/********************/
+
+/****MODULE STYLE********/
+
+/************************/
+
+/*****STATE STYLE********/
+.is-unclickable
+{
+    pointer-events: none;
+}
+/************************/
+
+
