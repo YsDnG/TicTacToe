@@ -153,7 +153,7 @@ const displayController =(() => {
                 if(wrapperFunction)
                 {
                     element.removeEventListener('click',wrapperFunction)
-                    element.removeEventListener('touchstart',wrapperFunction) 
+                    element.removeEventListener('touchend',wrapperFunction) 
 
                 }
             /**Wrapper function to pass the current player when clicked and count the number of move played yet*/
@@ -166,7 +166,7 @@ const displayController =(() => {
 
             /**Event Listener on click for every item of the grid***/
                 element.addEventListener('click',wrapperFunction) 
-                element.addEventListener('touchstart',wrapperFunction) 
+                element.addEventListener('touchend',wrapperFunction) 
 
 
         })
@@ -174,8 +174,7 @@ const displayController =(() => {
             if(clickEvent)
             {
                 gridContainer.removeEventListener('click',clickEvent)
-                gridContainer.removeEventListener('touchstart',wrapperFunction) 
-
+                gridContainer.removeEventListener('touchend',wrapperFunction) 
             }
 
             clickEvent = (event) => {
@@ -197,11 +196,12 @@ const displayController =(() => {
                 } 
             };
             gridContainer.addEventListener('click',clickEvent)
-            gridContainer.addEventListener('touchstart',clickEvent)
+            gridContainer.addEventListener('touchend',clickEvent)
         
 
     
         btnReset.addEventListener("click",resetGame);
+
             
     }
 
