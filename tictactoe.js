@@ -151,7 +151,11 @@ const displayController =(() => {
         { 
              /*Delete event listener if one was added before */
                 if(wrapperFunction)
+                {
                     element.removeEventListener('click',wrapperFunction)
+                    element.removeEventListener('touchstart',wrapperFunction) 
+
+                }
             /**Wrapper function to pass the current player when clicked and count the number of move played yet*/
                 wrapperFunction = (event) => 
                 {
@@ -162,11 +166,17 @@ const displayController =(() => {
 
             /**Event Listener on click for every item of the grid***/
                 element.addEventListener('click',wrapperFunction) 
+                element.addEventListener('touchstart',wrapperFunction) 
+
 
         })
         /*Delete event listener if one was added before */
             if(clickEvent)
+            {
                 gridContainer.removeEventListener('click',clickEvent)
+                gridContainer.removeEventListener('touchstart',wrapperFunction) 
+
+            }
 
             clickEvent = (event) => {
             /*Return if the element clicked was already played */
@@ -187,6 +197,7 @@ const displayController =(() => {
                 } 
             };
             gridContainer.addEventListener('click',clickEvent)
+            gridContainer.addEventListener('touchstart',clickEvent)
         
 
     
