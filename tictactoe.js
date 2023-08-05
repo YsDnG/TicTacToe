@@ -91,7 +91,7 @@ const gameBoardModule =(()=>{
 /***** Display Controller *********/
 const displayController =(() => {
     /***Selector ***/
-        const gridContainer = document.querySelector('.main-content');
+        const gridContainer = document.querySelector('.grid-content');
         const btnReset= document.querySelector('.btn-reset')
     /*****/
 
@@ -122,22 +122,18 @@ const displayController =(() => {
     /*******/
 
     /**Add the Player Move to the array and into the Dom element clicked */
-        const getPlayerMove = (element,player) => {
-                        /*Split the class attribute of element to get index[row]-[column] for the board array*/
-                            const index = element.classList[1].split('-')
-                        /*Add the player mark into the ArrayBoard */
-                            gameBoardModule.setCellValue(index[0],index[1],player.mark);
-                        /*Display the Mark of player on the element clicked*/
-                            element.textContent = player.mark
-                        /*Make the element no clickable*/
-                            element.classList.add('is-unclickable')
-                        
-        
+    const getPlayerMove = (element,player) => {
+        /*Split the class attribute of element to get index[row]-[column] for the board array*/
+            const index = element.classList[1].split('-')
+        /*Add the player mark into the ArrayBoard */
+            gameBoardModule.setCellValue(index[0],index[1],player.mark);
+        /*Display the Mark of player on the element clicked*/
+            element.textContent = player.mark
+        /*Make the element no clickable*/
+            element.classList.add('is-unclickable')
+    }
     /***********/
 
-    }
-   
-     
     /** Start the game and check for victory or dom full  ****/
     const startGame=(player1,player2)=>{
         /**Init the Game*/
@@ -154,69 +150,75 @@ const displayController =(() => {
                 {
                     element.removeEventListener('click',wrapperFunction)
                     element.removeEventListener('touchend',wrapperFunction) 
-
                 }
             /**Wrapper function to pass the current player when clicked and count the number of move played yet*/
                 wrapperFunction = (event) => 
                 {
+                        event.stopPropagation();
                         getPlayerMove(event.target,currentPlayer);
                         movePlayed++
-                    
+                        const result =gameBoardModule.isWinner();
+                        if(result)
+                        {
+                            displayResult(currentPlayer,result)
+                        }
+                        if(movePlayed >= myBoard.length*myBoard[0].length)
+                        {
+                            displayResult(currentPlayer,result)
+                        }  
                 };
-
             /**Event Listener on click for every item of the grid***/
                 element.addEventListener('click',wrapperFunction) 
                 element.addEventListener('touchend',wrapperFunction) 
-
-
         })
+
         /*Delete event listener if one was added before */
             if(clickEvent)
             {
-                gridContainer.removeEventListener('click',clickEvent)
-                gridContainer.removeEventListener('touchend',wrapperFunction) 
+                gridContainer.removeEventListener('click',clickEvent,true)
+                 gridContainer.removeEventListener('touchend',wrapperFunction) 
             }
-
             clickEvent = (event) => {
             /*Return if the element clicked was already played */
-                if(event.target.classList.contains('is-unclickable'))
-                    return;
+            if(event.target.classList.contains('is-unclickable'))
+                return;
 
-                currentPlayer = currentPlayer === null || currentPlayer === player2 ? player1 : player2;
-
-                if(gameBoardModule.isWinner())
-                {
-                    gridContainer.classList.add('is-unclickable')
-                    document.querySelector('.result-display').textContent =`Winner: ${currentPlayer.name}`
-                }
-                if(movePlayed >= myBoard.length*myBoard[0].length)
-                {
-                    gridContainer.classList.add('is-unclickable')
-                    document.querySelector('.result-display').textContent =`NO WINNER`
-                } 
+            currentPlayer = currentPlayer === null || currentPlayer === player2 ? player1 : player2;
             };
-            gridContainer.addEventListener('click',clickEvent)
-            gridContainer.addEventListener('touchend',clickEvent)
-        
-
-    
-        btnReset.addEventListener("click",resetGame);
-
-            
+        /*Event listener on click grid-content-> swap player / Btn-reset*/
+           gridContainer.addEventListener('click',clickEvent,true)
+           gridContainer.addEventListener('touchend',clickEvent)
+            btnReset.addEventListener("click",resetGame);
+        /*****/       
     }
-
     const resetGame=()=>{
             gameBoardModule.resetArray();
-           
+
             while(gridContainer.firstChild)
                 gridContainer.removeChild(gridContainer.firstChild);
+    
             if(gridContainer.classList.contains('is-unclickable'))
                 gridContainer.classList.remove('is-unclickable')
-
             document.querySelector('.result-display').textContent =""
             movePlayed=0;
             displayController.startGame(player1,player2);
-       
+    }
+
+    const displayResult =(player,result)=>
+    {
+        overlay = document.querySelector('.overlay');
+        overlay.textContent= result ? `WINNER: ${player.name}!` : `NO WINNER!`;
+        overlay.classList.remove('not-active');
+
+        const hideOverlayAndReset =() =>{
+            overlay.classList.add('not-active');
+            resetGame();
+            overlay.removeEventListener("click", hideOverlayAndReset);
+            overlay.removeEventListener("touchend", hideOverlayAndReset);
+
+        }
+        overlay.addEventListener("click",hideOverlayAndReset)
+        overlay.addEventListener('touchend',hideOverlayAndReset)
     }
 
     return{
@@ -237,8 +239,8 @@ function createPlayer(name,mark)
 }
 /*************************/
 
-const player1 = createPlayer("Carl","X");
-const player2 = createPlayer('Ysdng',"O");
+const player1 = createPlayer("X","X");
+const player2 = createPlayer('O',"O");
 displayController.startGame(player1,player2);
 
 

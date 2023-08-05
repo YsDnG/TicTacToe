@@ -11,6 +11,7 @@
     --background-color-3: #fca311;
 
     --color-1:#e5e5e5;
+    --color-1-50-Op:#e5e5e550;
     --color-2:#eaeaea;
     --color-3:#c1292e;
 }
@@ -19,7 +20,7 @@
 /**** BASE STYLE*******/
 html,body{
     height: 100vh;
-    width: 100vh;
+    width: 100vw;
 
     background-color: var(--background-color-2);
 
@@ -48,9 +49,42 @@ header{
 /*********************/
 
 /****LAYOUT STYLE***********/
-.main-content{
-    height: 50vh;
-    width: 50vh;
+.setUp-option{
+    display: flex;
+    gap: 2em;
+
+}
+.btn-setUp{
+    outline: 0;
+    border:0;
+    position: relative;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    width: 4em;
+    height: 2em;
+   
+    
+    border: none;
+    border-radius: 40px;
+
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 0.75em;
+    color: var(--background-color-2);
+
+    background-color: var(--color-3);
+    box-shadow:var(--color-1) 0px 0px 2px, var(--background-color-3) 0px 0px 0px 4px, var(--background-color-3) 0px 0px 2px 7px; 
+    
+
+}
+.grid-content{
+    height: 60%;
+    width: 60%;
 
     display: grid;
     grid-template-columns: repeat(3,1fr);
@@ -60,56 +94,34 @@ header{
 
     background-color: var(--color-3);
 }
+
 .grid-item {
     display: flex;
     justify-content: center;
     align-items: center;
 
     border: 1px solid var(--background-color-2);
-
-    font-size: 1.5em;
-
-    
+    font-size: 1.5em;  
 }
-.btn-reset
+
+.overlay
 {
-    display: inline-block;
-    outline: 0;
-    border:0;
-    cursor: pointer;
-    text-decoration: none;
-    position: relative;
-    color: var(--color-1);
-    background-color: var(--color-3);
-    line-height: 15px;
-    border-radius: 40px;
-    padding: 10px;
-    font-size: 1.5em;
-    font-weight: 600;
-    box-shadow:var(--background-color-3) -2px 0px 2px, var(--color-3) 0px 0px 0px 4px, var(--background-color-3) 0px 0px 2px 7px;
-    transition: all 0.2s;
-    :hover{
-        box-shadow: rgb(246, 84, 174) -2px -2px 0px 2px, rgb(255, 198, 0) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 0px 2px 7px;
-        transform: scale(1.01);
-    }
-    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
-
-
 
 .result-display{
-    height: 15vh;
-    width: 80%;
-
     display: flex;
     justify-content: center;
     align-items: center;
     
-    border-radius: 25px;
+    background-color: var(--color-1-50-Op);
 
-    background-color: var(--background-color-3);
-
-    font-size: 2em;
+    color: black;
+    font-size: 5em;
     font-weight: 800;
 }
 
@@ -123,6 +135,16 @@ header{
 .is-unclickable
 {
     pointer-events: none;
+}
+.btn-setUp:hover
+{
+    transform: scale(1.05);
+}
+.not-active{
+    display: none;
+}
+.add-focus{
+    box-shadow:var(--color-2) 0px 0px 2px, var(--color-2) 0px 0px 0px 5px, var(--background-color-2) 0px 0px 2px 7px; 
 }
 /************************/
 
