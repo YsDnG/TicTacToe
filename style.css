@@ -83,8 +83,8 @@ header{
 
 }
 .grid-content{
-    height: 60%;
-    width: 60%;
+    height: 25em;
+    width: 25em;
 
     display: grid;
     grid-template-columns: repeat(3,1fr);

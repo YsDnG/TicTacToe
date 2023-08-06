@@ -158,6 +158,8 @@
                                     const result =gameBoardModule.isWinner();
                                     if(result)
                                     {
+                                        if(event.type==="touchend")
+                                            setTimeout(()=>{},2000)
                                         displayResult(currentPlayer,result)
                                     }
                                     if(movePlayed >= myBoard.length*myBoard[0].length)
@@ -219,18 +221,16 @@
                 overlay.classList.remove('not-active');
                 /*Hide the overlay-> result display if click*/
                     const hideOverlayAndReset =(event) =>{
-                        if(event.type === 'touchend')
-                            setTimeout(()=>{},2000);
                         overlay.classList.add('not-active');
                         resetGame();
                         overlay.removeEventListener("click", hideOverlayAndReset);
-                        overlay.removeEventListener("touchend", hideOverlayAndReset);
+                        overlay.removeEventListener("touchstart", hideOverlayAndReset);
                     }
                   
                 /**/
                 /*Add listenner to the overlay on click*/
                     overlay.addEventListener("click",hideOverlayAndReset)
-                    overlay.addEventListener('touchend',hideOverlayAndReset)
+                    overlay.addEventListener('touchstart',hideOverlayAndReset)
                 /**/
             }
         /****/
