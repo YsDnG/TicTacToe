@@ -218,12 +218,15 @@
                 overlay.textContent= result ? `WINNER: ${player.name}!` : `NO WINNER!`;
                 overlay.classList.remove('not-active');
                 /*Hide the overlay-> result display if click*/
-                    const hideOverlayAndReset =() =>{
+                    const hideOverlayAndReset =(event) =>{
+                        if(event.type === 'touchend')
+                            setTimeout(()=>{},2000);
                         overlay.classList.add('not-active');
                         resetGame();
                         overlay.removeEventListener("click", hideOverlayAndReset);
                         overlay.removeEventListener("touchend", hideOverlayAndReset);
                     }
+                  
                 /**/
                 /*Add listenner to the overlay on click*/
                     overlay.addEventListener("click",hideOverlayAndReset)
