@@ -20,7 +20,7 @@
         /**/
 
         /* Reset array*/
-            const resetArray=()=>myBoard=[];
+            const resetArray=()=>myBoard.length=0;
 
         /*Get the Array */
             const getArray=()=>myBoard;
@@ -90,7 +90,6 @@
     const displayController =(() => {
         /**Selector**/
             const gridContainer = document.querySelector('.grid-content');
-            const btnReset= document.querySelector('.btn-reset')
         /****/
 
         /**General Variable **/
@@ -130,9 +129,17 @@
                     element.classList.add('is-unclickable')
             }
         /****/
+        /**Make a random move**/
+            const IaMove =()=>{
+                const boardFreeElement = gridContainer.querySelectorAll('*:not(.is-unclickable)');
+                const nodesArray = Array.from(boardFreeElement);
+                const randomElement = nodesArray[Math.floor(Math.random() * nodesArray.length)];
+                return randomElement;
+            } 
+        /**/
 
-        /** Start the game and check for victory or dom full  **/
-            const startGame=(player1,player2)=>{
+        /** Start the game and check for victory or grid full  **/
+            const startGame1v1=(player1,player2)=>{
                 /*Init the Game*/
                     gameBoardModule.initializeBoard(3,3);
                     displayController.createBoard(gameBoardModule.getArray());
@@ -193,15 +200,68 @@
                     /*Event listener on click grid-content-> swap player / Btn-reset*/
                         gridContainer.addEventListener('click',clickEvent,true)
                         gridContainer.addEventListener('touchend',clickEvent)
-                        btnReset.addEventListener("click",resetGame);
                     /**/       
-            }
+            };
+        /****/
+        /**Star game solo and check for victory or grid full **/
+            const startGameSolo=(player1,player2)=>{
+                /*Init the Game*/
+                let result = null
+                    gameBoardModule.initializeBoard(3,3);
+                    displayController.createBoard(gameBoardModule.getArray());
+                    const board = gridContainer.querySelectorAll('*');
+                /**/
+                /*For every elements of the board */ 
+                    board.forEach(element => 
+                    { 
+                        /*Delete event listener if one was added before */
+                            if(wrapperFunction)
+                            {
+                                element.removeEventListener('click',wrapperFunction)
+                                element.removeEventListener('touchend',wrapperFunction) 
+                            }
+                        /**/
+                        /*Wrapper function to pass the current player when clicked and count the number of move played yet*/
+                            wrapperFunction = (event) => 
+                            {
+                                    event.stopPropagation();
+                                    getPlayerMove(event.target,player1);
+                                    movePlayed++
+                                    result =gameBoardModule.isWinner();
+                                    if(result)
+                                    {
+                                        displayResult(player1,result)
+                                        return;
+                                    }
+
+                                    if(movePlayed >= myBoard.length*myBoard[0].length)
+                                        displayResult(player1,result)
+
+                                    getPlayerMove(IaMove(),player2)
+                                    movePlayed++;
+                                    result = gameBoardModule.isWinner();
+                                    if(result)
+                                        displayResult(player2,result)
+
+                                    if(movePlayed >= myBoard.length*myBoard[0].length)
+                                        displayResult(player1,result)
+                                    
+                                    
+                            };
+                /**/
+                /*Event Listener on click for every item of the grid*/
+                    element.addEventListener('click',wrapperFunction) 
+                    element.addEventListener('touchend',wrapperFunction) 
+                /**/
+
+                    });
+                };
         /****/
 
-        /**Reset the board, grid and start a new game every time the reset button is cliked**/
-            const resetGame=()=>{
-                    gameBoardModule.resetArray();
 
+        /**Reset the board, grid and start a new game every time the reset button is cliked**/
+            const resetGame=(player1,player2)=>{
+                    gameBoardModule.resetArray();
                     while(gridContainer.firstChild)
                         gridContainer.removeChild(gridContainer.firstChild);
             
@@ -209,7 +269,9 @@
                         gridContainer.classList.remove('is-unclickable')
                     document.querySelector('.result-display').textContent =""
                     movePlayed=0;
-                    displayController.startGame(player1,player2);
+
+                 btn1V1.classList.contains('add-focus') ? startGame1v1(player1,player2) : startGameSolo(player1,player2)
+                    
             }
         /****/
     
@@ -222,9 +284,9 @@
                 /*Hide the overlay-> result display if click*/
                     const hideOverlayAndReset =(event) =>{
                         overlay.classList.add('not-active');
-                        resetGame();
                         overlay.removeEventListener("click", hideOverlayAndReset);
                         overlay.removeEventListener("touchstart", hideOverlayAndReset);
+                        resetGame(player1,player2);
                     }
                   
                 /**/
@@ -238,7 +300,9 @@
             return{
                 createBoard,
                 getPlayerMove,
-                startGame,
+                startGame1v1,
+                startGameSolo,
+                resetGame,
             };
     })();
 /************************/
@@ -253,9 +317,44 @@
     }
 /**************************/
 
-const player1 = createPlayer("X","X");
-const player2 = createPlayer('O',"O");
-displayController.startGame(player1,player2);
+/************* General *************/
+    const btn1V1 = document.getElementById('btn-1v1')
+    const btnSolo=document.getElementById('btn-solo')
+    const btnReset= document.querySelector('.btn-reset')
+    const player1 = createPlayer('X',"X");
+    const player2 = createPlayer('O',"O");
+
+    btn1V1.classList.contains('add-focus') ? displayController.startGame1v1(player1,player2) : displayController.startGameSolo(player1,player2)
+
+    
+
+    btn1V1.addEventListener('click',()=>{
+    /*Swap focus btn-setup and reset the board*/
+        btnSolo.classList.remove('add-focus')
+        btn1V1.classList.add('add-focus')
+        displayController.resetGame(player1,player2);
+    /**/  
+    })
+    btnSolo.addEventListener('click',()=>{
+    /*Swap focus btn-setup and reset the board*/
+        btn1V1.classList.remove('add-focus')
+        btnSolo.classList.add('add-focus')
+        displayController.resetGame(player1,player2);
+    /**/
+
+    btnReset.addEventListener('click',()=>{
+        displayController.resetGame(player1,player2)
+    })
+    
+    
+       
+})
+/**************************/
+
+
+
+
+
 
 
 
