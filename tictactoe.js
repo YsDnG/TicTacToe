@@ -26,7 +26,7 @@
             const getArray=()=>myBoard;
 
         /** Look for victory on row **/
-            const isRowTheSame =()=>{
+            const isRowTheSame =(myBoard)=>{
                 for(i=0;i<myBoard[0].length;i++)
                 {
                     for(j=0;j<myBoard[0].length;j+=3)
@@ -40,7 +40,7 @@
         /****/
 
         /**Look for victory on column **/
-            const isColumnTheSame=()=>{
+            const isColumnTheSame=(myBoard)=>{
                 for(j=0;j<myBoard.length;j++)
                 {
                     for(i=0;i<myBoard.length;i+=3)
@@ -54,7 +54,7 @@
         /****/
 
         /**Look for victory accross the board **/
-            const isAccrossTheSame =()=>{
+            const isAccrossTheSame =(myBoard)=>{
                 
                 if(myBoard[0][0] === myBoard[1][1] && myBoard[1][1] === myBoard[2][2] && myBoard[0][0] !==""|| myBoard[0][2] === myBoard[1][1] && myBoard[1][1]===myBoard[2][0] && myBoard[2][0] !=="")
                     return true
@@ -64,10 +64,23 @@
         /****/
 
         /**Return true if vitoryOnRow or victoryOnColumn or victoryAcross is true false otherwise **/
-            const isWinner=()=>{
-                const vitoryOnRow = isRowTheSame();
-                const victoryOnColumn=isColumnTheSame();
-                const victoryAcross = isAccrossTheSame();
+            const isWinner=(myBoard)=>{
+                let openSpot = 9
+                for(i=0;i<myBoard.length;i++)
+                {
+                    for (let j = 0; j < myBoard[i].length; j++) 
+                    {
+                        if(myBoard[i][j] !== "")
+                            openSpot--
+                    }
+                }
+                const vitoryOnRow = isRowTheSame(myBoard);
+                const victoryOnColumn=isColumnTheSame(myBoard);
+                const victoryAcross = isAccrossTheSame(myBoard);
+
+                if(openSpot <= 0)
+                    return 'tie';
+
                 if(victoryOnColumn || vitoryOnRow || victoryAcross)
                     return true;
                 else
@@ -110,7 +123,7 @@
                     const element = document.createElement('div');
                     element.classList.add('grid-item')
                     /*Add the class correspond to indices of the Array*/
-                    element.classList.add((i)+'-'+(j));
+                    element.classList.add(`index-${i}-${j}`);
                     gridContainer.appendChild(element);
                     }
                 }
@@ -122,21 +135,81 @@
                 /*Split the class attribute of element to get index[row]-[column] for the board array*/
                     const index = element.classList[1].split('-')
                 /*Add the player mark into the ArrayBoard */
-                    gameBoardModule.setCellValue(index[0],index[1],player.mark);
+                    gameBoardModule.setCellValue(index[1],index[2],player.mark);
                 /*Display the Mark of player on the element clicked*/
                     element.textContent = player.mark
                 /*Make the element no clickable*/
                     element.classList.add('is-unclickable')
             }
         /****/
-        /**Make a random move**/
-            const IaMove =()=>{
-                const boardFreeElement = gridContainer.querySelectorAll('*:not(.is-unclickable)');
-                const nodesArray = Array.from(boardFreeElement);
-                const randomElement = nodesArray[Math.floor(Math.random() * nodesArray.length)];
-                return randomElement;
+
+        /**Return the element to play for the best from Ia**/
+            const IaBestMove =()=>{
+                const indexElement = minimax(myBoard,0,true);
+                const elementIa = document.querySelector(`.index-${indexElement.index.x}-${indexElement.index.y}`)
+                return elementIa;
             } 
-        /**/
+        /****/
+
+        /**Return the the index of the next best move for the ia to make **/
+            const minimax = (myboard,depth,isIaPlayer) => {
+                let result = gameBoardModule.isWinner(myboard);
+                if (result !== 'tie' && result)
+                {
+                    if(!isIaPlayer)
+                        return {score: 10, index: null};
+                    else
+                        return {score: -10, index: null};  
+                } 
+                if (result === 'tie') return {score: 0, index: null};
+                
+                if(isIaPlayer)
+                {
+                    let bestScore = -Infinity;
+                    let bestMove = null;
+
+                    for(let i=0;i<3;i++) {
+                        for(let j=0;j<3;j++) {
+                            if(myboard[i][j]==='') 
+                            {
+                                myboard[i][j]="O"
+                                let currentScore=minimax(myboard,depth+1,false).score
+                                if(currentScore > bestScore) 
+                                {
+                                    bestScore=currentScore;
+                                    bestMove={x:i,y:j};
+                                }
+                                myboard[i][j] = "";
+                            }
+                        }
+                    }
+                    return {score: bestScore, index: bestMove}
+                }
+                else
+                {
+                    let bestScore = +Infinity;
+                    let bestMove= null;
+                    for(let i=0;i<3;i++)
+                    {
+                        for(let j=0;j<3;j++)
+                        {
+                            if(myboard[i][j]==='')
+                            {
+                                myboard[i][j]="X"
+                                let currentScore=minimax(myboard,depth+1,true).score
+                                if(currentScore < bestScore)
+                                {
+                                    bestScore = currentScore;
+                                    bestMove ={x:i,y:j};
+                                }
+                                myboard[i][j] = "";
+                            }
+                        }
+                    }
+                    return {score: bestScore, index: bestMove}
+                }
+            }
+        /****/
 
         /** Start the game and check for victory or grid full  **/
             const startGame1v1=(player1,player2)=>{
@@ -162,7 +235,7 @@
                                     event.stopPropagation();
                                     getPlayerMove(event.target,currentPlayer);
                                     movePlayed++
-                                    const result =gameBoardModule.isWinner();
+                                    const result =gameBoardModule.isWinner(gameBoardModule.getArray());
                                     if(result)
                                     {
                                         if(event.type==="touchend")
@@ -203,7 +276,8 @@
                     /**/       
             };
         /****/
-        /**Star game solo and check for victory or grid full **/
+
+        /**Star game solo vs Ia and check for victory or grid full **/
             const startGameSolo=(player1,player2)=>{
                 /*Init the Game*/
                 let result = null
@@ -226,25 +300,26 @@
                             {
                                     event.stopPropagation();
                                     getPlayerMove(event.target,player1);
-                                    movePlayed++
-                                    result =gameBoardModule.isWinner();
-                                    if(result)
+                                    result = gameBoardModule.isWinner(myBoard);
+                                    if(result && result !== 'tie')
                                     {
                                         displayResult(player1,result)
                                         return;
                                     }
+                                    if(result === 'tie')
+                                        displayResult(player1,false)
 
-                                    if(movePlayed >= myBoard.length*myBoard[0].length)
-                                        displayResult(player1,result)
+                                    getPlayerMove(IaBestMove(),player2)
 
-                                    getPlayerMove(IaMove(),player2)
-                                    movePlayed++;
-                                    result = gameBoardModule.isWinner();
-                                    if(result)
+                                    result = gameBoardModule.isWinner(myBoard);
+                                    
+                                    if(result && result !== 'tie')
+                                    {
                                         displayResult(player2,result)
-
-                                    if(movePlayed >= myBoard.length*myBoard[0].length)
-                                        displayResult(player1,result)
+                                        return;
+                                    }
+                                    if(result === 'tie')
+                                        displayResult(player1,false)
                                     
                                     
                             };
