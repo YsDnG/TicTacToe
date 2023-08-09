@@ -109,6 +109,7 @@ header{
     align-items: center;
 
     border: 1px solid var(--background-color-2);
+
     font-size: 1.5em;  
 }
 
@@ -153,6 +154,19 @@ header{
 }
 .add-focus{
     box-shadow:var(--color-2) 0px 0px 2px, var(--color-2) 0px 0px 0px 5px, var(--background-color-2) 0px 0px 2px 7px; 
+}
+
+.grid-item:hover{
+
+    background-color: #ec4b50;
+}
+.player-X
+{
+    background-color: #e70c13;
+}
+.player-O
+{
+    background-color: var(--background-color-1);
 }
 /************************/
 

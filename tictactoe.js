@@ -140,6 +140,7 @@
                     element.textContent = player.mark
                 /*Make the element no clickable*/
                     element.classList.add('is-unclickable')
+                    element.classList.add(`player-${player.mark}`)
             }
         /****/
 
@@ -337,7 +338,11 @@
                                         return;
                                     }
                                     if(result === 'tie')
-                                        displayResult(player1,false)
+                                    {
+                                        displayResult(player1,false,difficulty)
+                                        return;
+                                    }
+                                        
 
                                     getPlayerMove(IaBestMove(difficulty),player2,difficulty)
 
@@ -349,9 +354,10 @@
                                         return;
                                     }
                                     if(result === 'tie')
+                                    {
                                         displayResult(player1,false,difficulty)
-                                    
-                                    
+                                        return;
+                                    }
                             };
                 /**/
                 /*Event Listener on click for every item of the grid*/
