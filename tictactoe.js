@@ -143,11 +143,43 @@
             }
         /****/
 
-        /**Return the element to play for the best from Ia**/
-            const IaBestMove =()=>{
-                const indexElement = minimax(myBoard,0,true);
-                const elementIa = document.querySelector(`.index-${indexElement.index.x}-${indexElement.index.y}`)
-                return elementIa;
+        /**Return the element to play for the best from Ia based on difficulty choice**/
+            const IaBestMove =(difficulty)=>{
+
+                const getRdmElement =() => {
+                    const boardFreeElement = gridContainer.querySelectorAll('*:not(.is-unclickable)');
+                    const nodesArray = Array.from(boardFreeElement);
+                    const randomElement = nodesArray[Math.floor(Math.random() * nodesArray.length)];
+                    return randomElement;
+                }
+                const getBestElement=()=>
+                {
+                    const indexElement = minimax(myBoard,0,true);
+                    const elementIa = document.querySelector(`.index-${indexElement.index.x}-${indexElement.index.y}`)
+                    return elementIa;
+                } 
+
+                if(difficulty === "hard")
+                {
+                  return getBestElement()
+                }
+                else 
+                    if(difficulty=== "easy")
+                    {
+                        if(Math.random()< 0.5)
+                            return getRdmElement();
+                        else
+                            return getBestElement();
+                            
+                    }
+                else
+                    if(difficulty=== "medium")
+                    {
+                        if(Math.random() < 0.2)
+                            return getRdmElement();
+                        else
+                            return getBestElement();   
+                    }
             } 
         /****/
 
@@ -236,16 +268,14 @@
                                     getPlayerMove(event.target,currentPlayer);
                                     movePlayed++
                                     const result =gameBoardModule.isWinner(gameBoardModule.getArray());
-                                    if(result)
+                                    if(result && result !== 'tie')
                                     {
-                                        if(event.type==="touchend")
-                                            setTimeout(()=>{},2000)
                                         displayResult(currentPlayer,result)
+                                        return;
                                     }
-                                    if(movePlayed >= myBoard.length*myBoard[0].length)
-                                    {
-                                        displayResult(currentPlayer,result)
-                                    }  
+                                    if(result === 'tie')
+                                        displayResult(player1,false)
+
                             };
                         /**/
                         /*Event Listener on click for every item of the grid*/
@@ -278,7 +308,7 @@
         /****/
 
         /**Star game solo vs Ia and check for victory or grid full **/
-            const startGameSolo=(player1,player2)=>{
+            const startGameSolo=(player1,player2,difficulty)=>{
                 /*Init the Game*/
                 let result = null
                     gameBoardModule.initializeBoard(3,3);
@@ -303,23 +333,23 @@
                                     result = gameBoardModule.isWinner(myBoard);
                                     if(result && result !== 'tie')
                                     {
-                                        displayResult(player1,result)
+                                        displayResult(player1,result,difficulty)
                                         return;
                                     }
                                     if(result === 'tie')
                                         displayResult(player1,false)
 
-                                    getPlayerMove(IaBestMove(),player2)
+                                    getPlayerMove(IaBestMove(difficulty),player2,difficulty)
 
                                     result = gameBoardModule.isWinner(myBoard);
                                     
                                     if(result && result !== 'tie')
                                     {
-                                        displayResult(player2,result)
+                                        displayResult(player2,result,difficulty)
                                         return;
                                     }
                                     if(result === 'tie')
-                                        displayResult(player1,false)
+                                        displayResult(player1,false,difficulty)
                                     
                                     
                             };
@@ -335,7 +365,7 @@
 
 
         /**Reset the board, grid and start a new game every time the reset button is cliked**/
-            const resetGame=(player1,player2)=>{
+            const resetGame=(player1,player2,difficulty)=>{
                     gameBoardModule.resetArray();
                     while(gridContainer.firstChild)
                         gridContainer.removeChild(gridContainer.firstChild);
@@ -345,13 +375,13 @@
                     document.querySelector('.result-display').textContent =""
                     movePlayed=0;
 
-                 btn1V1.classList.contains('add-focus') ? startGame1v1(player1,player2) : startGameSolo(player1,player2)
+                 btn1V1.classList.contains('add-focus') ? startGame1v1(player1,player2) : startGameSolo(player1,player2,difficulty)
                     
             }
         /****/
     
         /**Display the result of the game**/
-            const displayResult =(player,result)=>
+            const displayResult =(player,result,difficulty)=>
             {
                 overlay = document.querySelector('.overlay');
                 overlay.textContent= result ? `WINNER: ${player.name}!` : `NO WINNER!`;
@@ -361,7 +391,7 @@
                         overlay.classList.add('not-active');
                         overlay.removeEventListener("click", hideOverlayAndReset);
                         overlay.removeEventListener("touchstart", hideOverlayAndReset);
-                        resetGame(player1,player2);
+                        resetGame(player1,player2,difficulty);
                     }
                   
                 /**/
@@ -396,34 +426,58 @@
     const btn1V1 = document.getElementById('btn-1v1')
     const btnSolo=document.getElementById('btn-solo')
     const btnReset= document.querySelector('.btn-reset')
+    const btnSoloSetUp = document.querySelector('.btn-solo-setUp')
     const player1 = createPlayer('X',"X");
     const player2 = createPlayer('O',"O");
 
     btn1V1.classList.contains('add-focus') ? displayController.startGame1v1(player1,player2) : displayController.startGameSolo(player1,player2)
 
-    
+    const isActive = (element) => { element.classList.remove('not-active')};
 
+    const notActive= (element) => { element.classList.add('not-active')}
+
+    const swapfocus = (element1,element2) => { 
+        element1.classList.remove('add-focus'); 
+        element2.classList.add('add-focus'); 
+    };
+    
     btn1V1.addEventListener('click',()=>{
     /*Swap focus btn-setup and reset the board*/
-        btnSolo.classList.remove('add-focus')
-        btn1V1.classList.add('add-focus')
+        swapfocus(btnSolo,btn1V1);
+        notActive(btnSoloSetUp);
         displayController.resetGame(player1,player2);
     /**/  
     })
+
     btnSolo.addEventListener('click',()=>{
     /*Swap focus btn-setup and reset the board*/
-        btn1V1.classList.remove('add-focus')
-        btnSolo.classList.add('add-focus')
-        displayController.resetGame(player1,player2);
+        swapfocus(btn1V1,btnSolo);
+        isActive(btnSoloSetUp);
+        const boxes = btnSoloSetUp.querySelectorAll('input');
+        displayController.resetGame(player1,player2,"hard");
+        
+            boxes.forEach(element => {
+                element.addEventListener('change',() => {
+                    if(element.checked)
+                    {
+                        displayController.resetGame(player1,player2,element.name);
+                        boxes.forEach(innerBox => {
+                            if (innerBox !== element) {
+                                    innerBox.checked = false;
+                            }
+                        });
+                    }
+                });
+            });
+    });
+
     /**/
 
     btnReset.addEventListener('click',()=>{
         displayController.resetGame(player1,player2)
     })
-    
-    
-       
-})
+      
+
 /**************************/
 
 
