@@ -255,7 +255,7 @@ const displayController =(() => {
                                 }
                                     
 
-                                getPlayerMove(IaBestMove(difficulty),player2,difficulty)
+                                getPlayerMove(IaBestMove(difficulty),player2)
 
                                 result = gameBoardModule.isWinner(myBoard);
                                 
@@ -292,7 +292,7 @@ const displayController =(() => {
                 document.querySelector('.result-display').textContent =""
                 movePlayed=0;
 
-             btn1V1.classList.contains('add-focus') ? startGame1v1(player1,player2) : startGameSolo(player1,player2,difficulty)
+             btn1V1.classList.contains('add-focus') ? startGame1v1(player1,player2) : startGameSolo(player2,player1,difficulty)
                 
         }
     /****/
@@ -305,11 +305,16 @@ const displayController =(() => {
             overlay.classList.remove('not-active');
             /*Hide the overlay-> result display if click*/
                 const hideOverlayAndReset =(event) =>{
-                    overlay.classList.add('not-active');
-                    overlay.removeEventListener("click", hideOverlayAndReset);
-                    overlay.removeEventListener("touchstart", hideOverlayAndReset);
-                    resetGame(player1,player2,difficulty);
+                    
+                    
+                    setTimeout(function(){
+                        overlay.classList.add('not-active');
+                        overlay.removeEventListener("click", hideOverlayAndReset);
+                        overlay.removeEventListener("touchstart", hideOverlayAndReset);
+                        resetGame(player1,player2,difficulty);
+                    },250)
                 }
+
               
             /**/
             /*Add listenner to the overlay on click*/

@@ -19,8 +19,8 @@ const Main=(()=>{
         const btnSolo= document.getElementById('btn-solo')
         const btnReset = document.querySelector('.btn-reset')
         const btnSoloSetUp = document.querySelector('.btn-solo-setUp')
-        const player1 = createPlayer('X',"X");
-        const player2 = createPlayer('O',"O");
+        const player2 = createPlayer('X',"X");
+        const player1 = createPlayer('O',"O");
     /****/
 
     /**Start a game by default 1v1 **/
